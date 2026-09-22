@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#5b5ce2" />
+  <meta name="description" content="GeoMaster EN – antrenament interactiv de geometrie pentru Evaluarea Națională." />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icon.svg" />
+  <title>GeoMaster EN</title>
+  <style>
+    :root { --bg:#f5f7ff; --card:#fff; --ink:#20233a; --muted:#68708a; --line:#e6e9f4; --p:#5b5ce2; --p2:#7a5cf0; --green:#12a77b; --yellow:#eea717; --red:#df5b66; --shadow:0 10px 30px rgba(49,56,123,.12); }
+    * { box-sizing:border-box; }
+    body { margin:0; background:linear-gradient(180deg,#eef0ff 0,#f7f8fe 260px); color:var(--ink); font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; }
+    button { font:inherit; }
+    .app { max-width:1080px; margin:auto; padding:16px 16px 34px; }
+    .top { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:8px 0 18px; }
+    .brand { display:flex; align-items:center; gap:11px; }
+    .logo { width:46px; height:46px; display:grid; place-items:center; border-radius:14px; background:linear-gradient(135deg,var(--p),#35c8aa); color:#fff; font-size:24px; box-shadow:0 8px 18px rgba(91,92,226,.28); }
+    h1 { margin:0; font-size:1.15rem; line-height:1.1; } .subtitle { font-size:.78rem; color:var(--muted); }
+    .icon-btn { border:1px solid var(--line); background:var(--card); border-radius:12px; width:44px; height:44px; cursor:pointer; font-size:20px; }
+    .mobile-nav { display:flex; gap:9px; margin-bottom:18px; }
+    .menu-btn,.install-btn { border:0; cursor:pointer; border-radius:13px; padding:12px 14px; font-weight:800; }
+    .menu-btn { background:var(--ink); color:#fff; flex:1; text-align:left; }
+    .install-btn { background:#dff8f0; color:#087759; display:none; }
+    .nav { display:none; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; background:var(--card); padding:10px; border-radius:16px; box-shadow:var(--shadow); margin-bottom:18px; }
+    .nav.open { display:grid; }
+    .nav button { border:1px solid var(--line); background:#fff; color:var(--ink); padding:11px 8px; border-radius:11px; text-align:left; cursor:pointer; font-size:.86rem; font-weight:700; }
+    .nav button.active { background:var(--p); border-color:var(--p); color:#fff; }
+    .hero { background:linear-gradient(135deg,#5b5ce2,#7a5cf0 65%,#46cbb2); color:#fff; padding:24px; border-radius:22px; box-shadow:var(--shadow); margin-bottom:18px; }
+    .hero h2 { margin:0 0 7px; font-size:1.45rem; line-height:1.2; } .hero p { margin:0; opacity:.95; max-width:650px; }
+    .rule { margin-top:15px; padding:12px; border-radius:13px; background:rgba(255,255,255,.14); font-size:.92rem; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:13px; }
+    .tile,.panel { background:var(--card); border:1px solid rgba(227,231,245,.9); border-radius:18px; box-shadow:var(--shadow); }
+    .tile { padding:17px; cursor:pointer; transition:transform .18s ease; } .tile:active { transform:scale(.98); }
+    .tile .emoji { width:44px; height:44px; display:grid; place-items:center; border-radius:12px; background:#f0efff; font-size:23px; margin-bottom:11px; }
+    .tile h3 { margin:0 0 4px; font-size:1rem; } .tile p { margin:0; color:var(--muted); font-size:.86rem; }
+    .screen { display:none; } .screen.active { display:block; }
+    .panel { padding:18px; margin-bottom:14px; }
+    .panel h2 { margin:0 0 6px; font-size:1.25rem; } .panel p { margin:5px 0; }
+    .hint { color:var(--muted); font-size:.92rem; }
+    .chips { display:flex; gap:8px; flex-wrap:wrap; margin:12px 0; }
+    .chip { border:1px solid var(--line); background:#fff; color:var(--ink); border-radius:999px; padding:8px 11px; font-size:.83rem; font-weight:700; cursor:pointer; }
+    .chip.active { background:var(--p); border-color:var(--p); color:#fff; }
+    .flash-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:13px; }
+    .flash { min-height:230px; perspective:900px; cursor:pointer; }
+    .flash-in { position:relative; width:100%; height:230px; transform-style:preserve-3d; transition:transform .55s; }
+    .flash.flip .flash-in { transform:rotateY(180deg); }
+    .face { position:absolute; inset:0; padding:20px; border-radius:18px; backface-visibility:hidden; box-shadow:var(--shadow); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+    .front { background:#fff; } .back { background:linear-gradient(135deg,var(--p),#7a5cf0); color:#fff; transform:rotateY(180deg); }
+    .symbol { font:700 2rem Georgia,serif; margin:12px 0; } .small { font-size:.83rem; opacity:.9; }
+    .figure { background:#fbfcff; border:1px solid var(--line); border-radius:16px; padding:10px; text-align:center; margin:14px 0; }
+    .figure svg { width:min(100%,340px); height:auto; }
+    .step { border:1px solid var(--line); border-radius:14px; padding:13px; margin:10px 0; }
+    .step-title { font-weight:850; margin-bottom:8px; }
+    .answers { display:grid; gap:8px; }
+    .answer { width:100%; text-align:left; border:1px solid var(--line); background:#fff; border-radius:11px; padding:11px; cursor:pointer; color:var(--ink); }
+    .answer.selected { border-color:var(--p); background:#f0efff; } .answer.good { border-color:var(--green); background:#e8fbf4; } .answer.bad { border-color:var(--red); background:#fff0f1; }
+    .actions { display:flex; gap:9px; flex-wrap:wrap; margin-top:14px; }
+    .primary,.secondary { border:0; border-radius:11px; padding:11px 14px; cursor:pointer; font-weight:800; }
+    .primary { background:var(--p); color:#fff; } .secondary { background:#eef0ff; color:#403eb3; }
+    .message { display:none; margin-top:12px; padding:12px; border-radius:12px; background:#fff6dc; color:#73530b; } .message.show { display:block; }
+    .solution { display:none; white-space:pre-line; margin-top:12px; padding:13px; border-radius:13px; background:#e8fbf4; color:#075a42; } .solution.show { display:block; }
+    .bar-row { margin:16px 0; } .bar-label { display:flex; justify-content:space-between; gap:8px; font-weight:750; font-size:.92rem; } .bar { height:11px; border-radius:99px; background:#edf0f7; overflow:hidden; margin-top:7px; } .fill { height:100%; background:linear-gradient(90deg,var(--p),#42c8ad); border-radius:inherit; }
+    .formula { font:700 1.3rem Georgia,serif; text-align:center; padding:13px; margin:12px 0; background:#f5f4ff; border-radius:12px; }
+    .exam-head { display:flex; justify-content:space-between; gap:12px; align-items:center; } .timer { font-weight:900; color:var(--p); }
+    textarea { width:100%; min-height:125px; resize:vertical; border:1px solid var(--line); border-radius:12px; padding:12px; font:inherit; }
+    .footer-note { color:var(--muted); font-size:.78rem; text-align:center; margin-top:20px; }
+    @media(min-width:760px){ .app{padding:24px;} .mobile-nav{display:none;} .nav{display:flex; padding:8px; overflow:auto; grid-template-columns:none;} .nav button{white-space:nowrap;} .hero{padding:30px;} }
+    @media(prefers-color-scheme:dark){ body{background:#111426;color:#f0f2ff;} .tile,.panel,.front,.nav,.icon-btn,.answer,.chip{background:#1d2138;color:#f0f2ff;border-color:#343a5c;} .figure{background:#171b30;border-color:#343a5c;} .hint,.subtitle,.tile p{color:#b8bfd9;} .bar{background:#303652;} .formula{background:#292650;} .secondary{background:#2a2d57;color:#d9dbff;} }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="top">
+      <div class="brand"><div class="logo">📐</div><div><h1>GeoMaster EN</h1><div class="subtitle">Geometrie · clasa a VIII-a</div></div></div>
+      <button class="icon-btn" id="themeBtn" aria-label="Schimbă tema">◐</button>
+    </header>
+
+    <div class="mobile-nav"><button class="menu-btn" id="menuBtn">☰ Meniu</button><button class="install-btn" id="installBtn">⬇ Instalează</button></div>
+    <nav class="nav" id="nav">
+      <button data-go="home" class="active">🏠 Acasă</button><button data-go="flash">📚 Flashcarduri</button><button data-go="start">🧠 Începe problema</button><button data-go="read">📐 Citește figura</button><button data-go="practice">✏️ Exerciții</button><button data-go="formulas">📖 Formule</button><button data-go="exam">🎯 Examen</button><button data-go="progress">📊 Progres</button>
+    </nav>
+
+    <section id="home" class="screen active">
+      <div class="hero"><h2>Nu trebuie să vezi toată rezolvarea din prima.</h2><p>Învață să găsești <strong>primul pas corect</strong>: citești figura, identifici datele, observi proprietățile și alegi teorema.</p><div class="rule">CE ȘTIU? → CE MI SE CERE? → CE OBSERV? → CE LEGĂTURĂ EXISTĂ? → CE TEOREMĂ FOLOSESC? → PRIMUL PAS</div></div>
+      <div class="grid" id="homeTiles"></div>
+    </section>
+
+    <section id="flash" class="screen"><div class="panel"><h2>📚 Flashcarduri interactive</h2><p class="hint">Apasă pe un card ca să îl întorci.</p><div class="chips" id="flashFilters"></div><div class="flash-grid" id="flashCards"></div></div></section>
+    <section id="start" class="screen"><div class="panel" id="startContent"></div></section>
+    <section id="read" class="screen"><div class="panel" id="readContent"></div></section>
+    <section id="practice" class="screen"><div class="panel" id="practiceContent"></div></section>
+    <section id="formulas" class="screen"><div class="panel" id="formulaContent"></div></section>
+    <section id="exam" class="screen"><div class="panel" id="examContent"></div></section>
+    <section id="progress" class="screen"><div class="panel" id="progressContent"></div></section>
+    <p class="footer-note">GeoMaster EN · progres salvat local pe acest dispozitiv</p>
+  </main>
+
+<script>
+const storageKey='geomaster-en-v2';
+const state=JSON.parse(localStorage.getItem(storageKey)||'{"done":{},"flash":{},"score":0,"theme":""}');
+const save=()=>localStorage.setItem(storageKey,JSON.stringify(state));
+const $=s=>document.querySelector(s); const $$=s=>[...document.querySelectorAll(s)];
+const diagram={
+ right:`<svg viewBox="0 0 260 180" aria-label="Triunghi dreptunghic"><path d="M40 145 L40 35 L220 145 Z" fill="none" stroke="currentColor" stroke-width="3"/><path d="M40 128h17v17" fill="none" stroke="#5b5ce2" stroke-width="3"/><text x="25" y="165">A</text><text x="25" y="30">B</text><text x="225" y="165">C</text><text x="35" y="90" fill="#5b5ce2">6</text><text x="125" y="163" fill="#5b5ce2">8</text></svg>`,
+ thales:`<svg viewBox="0 0 260 205" aria-label="Triunghi cu segment paralel"><path d="M130 22 L35 180 L225 180 Z" fill="none" stroke="currentColor" stroke-width="3"/><path d="M78 108 L182 108" stroke="#5b5ce2" stroke-width="4"/><path d="M73 116h10 M177 116h10 M100 187h12 M148 187h12" stroke="#12a77b" stroke-width="3"/><text x="125" y="18">A</text><text x="20" y="197">B</text><text x="230" y="197">C</text><text x="65" y="104">D</text><text x="186" y="104">E</text><text x="112" y="101" fill="#5b5ce2">DE ∥ BC</text></svg>`,
+ isosceles:`<svg viewBox="0 0 260 185" aria-label="Triunghi isoscel cu înălțime"><path d="M130 25 L40 155 L220 155 Z" fill="none" stroke="currentColor" stroke-width="3"/><path d="M130 25V155" stroke="#5b5ce2" stroke-width="3" stroke-dasharray="7 6"/><path d="M130 140h15v15" fill="none" stroke="#5b5ce2" stroke-width="3"/><path d="M82 83l9 7 M169 90l9-7" stroke="#12a77b" stroke-width="3"/><text x="125" y="20">A</text><text x="25" y="175">B</text><text x="225" y="175">C</text><text x="135" y="174">D</text></svg>`
+};
+const flash=[
+ ['Semne','AB ⊥ CD','AB este perpendicular pe CD. Formează un unghi de 90°','Când vezi ⊥, verifică dacă apare un triunghi dreptunghic.'],
+ ['Semne','AB ∥ CD','AB este paralel cu CD. Dreptele nu se întâlnesc.','În triunghi, un segment paralel cu o latură sugerează Thales sau asemănare.'],
+ ['Semne','∠ABC','Este unghiul cu vârful în B. Litera din mijloc este mereu vârful.','Caută unghiuri egale, unghi drept sau suma unghiurilor.'],
+ ['Triunghiuri','AB = AC','Triunghiul ABC este isoscel; unghiurile de la bază B și C sunt egale.','Când vezi două laturi egale, gândește-te la unghiurile de la bază.'],
+ ['Triunghiuri','a² + b² = c²','Teorema lui Pitagora într-un triunghi dreptunghic; c este ipotenuza.','O folosești doar când ai un unghi de 90°.'],
+ ['Cerc','d = 2r','Diametrul este de două ori raza.','Folosești când ai raza și ți se cere diametrul sau invers.']
+];
+const problems=[
+ {id:'pit',title:'Pitagora',text:'Triunghiul ABC este dreptunghic în A. AB = 6 cm, AC = 8 cm. Află BC.',fig:'right',obs:'Există un unghi de 90°',theorem:'Teorema lui Pitagora',first:'Scriu BC² = AB² + AC².',solution:'BC² = 6² + 8²\nBC² = 36 + 64 = 100\nBC = 10 cm',why:'Folosim Pitagora deoarece triunghiul este dreptunghic și cunoaștem cele două catete.'},
+ {id:'tha',title:'Thales',text:'În triunghiul ABC, D ∈ AB, E ∈ AC, DE ∥ BC. AD = 4 cm, AB = 10 cm, AC = 15 cm. Află AE.',fig:'thales',obs:'Există un segment paralel cu o latură a triunghiului',theorem:'Teorema lui Thales',first:'Scriu proporția AD / AB = AE / AC.',solution:'AD / AB = AE / AC\n4 / 10 = AE / 15\nAE = 6 cm',why:'Folosim Thales deoarece DE este paralel cu BC într-un triunghi.'},
+ {id:'iso',title:'Triunghi isoscel',text:'ABC este isoscel, AB = AC = 10 cm, BC = 12 cm. AD este înălțimea. Află AD.',fig:'isosceles',obs:'Înălțimea este și mediană, deci BD = DC = 6 cm',theorem:'Teorema lui Pitagora',first:'În triunghiul dreptunghic ABD scriu AB² = AD² + BD².',solution:'BD = 12 / 2 = 6 cm\nAD² = 10² − 6² = 64\nAD = 8 cm',why:'Într-un triunghi isoscel, înălțimea din vârf este și mediană; apoi apare un triunghi dreptunghic.'}
+];
+const tiles=[['📚','Flashcarduri','Semne și idei-cheie','flash'],['🧠','Învață să începi','Găsește primul pas','start'],['📐','Citește figura','Observă marcajele','read'],['✏️','Exerciții','Rezolvare explicată','practice'],['📖','Formule','Când le folosesc?','formulas'],['🎯','Simulare','Problemă cu timp','exam'],['📊','Progresul meu','Teorie și aplicare','progress']];
+function go(id){$$('.screen').forEach(x=>x.classList.remove('active'));$('#'+id).classList.add('active');$$('[data-go]').forEach(b=>b.classList.toggle('active',b.dataset.go===id));$('#nav').classList.remove('open');window.scrollTo({top:0,behavior:'smooth'});if(id==='progress')renderProgress();if(id==='exam')renderExam();}
+function renderHome(){ $('#homeTiles').innerHTML=tiles.map(t=>`<article class="tile" data-tile="${t[3]}"><div class="emoji">${t[0]}</div><h3>${t[1]}</h3><p>${t[2]}</p></article>`).join('');$$('[data-tile]').forEach(x=>x.onclick=()=>go(x.dataset.tile));}
+function renderFlash(filter='Toate'){let cats=['Toate',...new Set(flash.map(f=>f[0]))];$('#flashFilters').innerHTML=cats.map(c=>`<button class="chip ${c===filter?'active':''}" data-filter="${c}">${c}</button>`).join('');$$('[data-filter]').forEach(b=>b.onclick=()=>renderFlash(b.dataset.filter));let arr=filter==='Toate'?flash:flash.filter(f=>f[0]===filter);$('#flashCards').innerHTML=arr.map((f,i)=>`<div class="flash" data-flash="${i}"><div class="flash-in"><div class="face front"><strong>${f[0]}</strong><div class="symbol">${f[1]}</div><span class="small">Apasă pentru răspuns</span></div><div class="face back"><strong>${f[2]}</strong><p class="small">💡 ${f[3]}</p></div></div></div>`).join('');$$('[data-flash]').forEach(x=>x.onclick=()=>{x.classList.toggle('flip');state.flash[x.dataset.flash]=true;save();});}
+function problemHtml(p,mode='start'){return `<h2>🧠 ${mode==='read'?'Citește figura':'Cum încep o problemă?'}</h2><p class="hint">Nu sări direct la calcul. Identifică primul pas.</p><div class="figure">${diagram[p.fig]}</div><div class="step"><div class="step-title">Problema</div>${p.text}</div><div class="step"><div class="step-title">1. Ce observi?</div><div class="answers" data-q="obs"><button class="answer">${p.obs}</button><button class="answer">Toate laturile sunt egale</button><button class="answer">Nu există nicio informație utilă</button></div></div><div class="step"><div class="step-title">2. Ce teoremă alegi?</div><div class="answers" data-q="theorem"><button class="answer">${p.theorem}</button><button class="answer">Formula ariei cercului</button><button class="answer">Suma unghiurilor patrulaterului</button></div></div><div class="step"><div class="step-title">3. Care este primul pas?</div><div class="answers" data-q="first"><button class="answer">${p.first}</button><button class="answer">Scriu imediat răspunsul final</button><button class="answer">Ignor marcajele din desen</button></div></div><div class="actions"><button class="primary" id="checkStart">Verifică</button><button class="secondary" id="hintStart">Ajutor</button><button class="secondary" id="nextStart">Altă problemă</button></div><div class="message" id="hintBox">Hint: uită-te mai întâi la marcajul important din figură. Întreabă-te ce teoremă se activează prin acel marcaj.</div><div class="solution" id="solutionBox"><strong>Rezolvare</strong><br>${p.solution}<br><br><strong>De ce?</strong> ${p.why}</div>`}
+let pIndex=0;
+function bindProblem(target){const p=problems[pIndex];$(target).innerHTML=problemHtml(p);$$(target+' .answer').forEach(b=>b.onclick=()=>{b.parentElement.querySelectorAll('.answer').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');});$('#checkStart').onclick=()=>{let ok=true;['obs','theorem','first'].forEach(q=>{let chosen=$(`[data-q="${q}"] .selected`);let correct=$(`[data-q="${q}"] .answer`).textContent.trim()==p[q];if(!chosen||chosen.textContent.trim()!==p[q]){ok=false;if(chosen)chosen.classList.add('bad');}else chosen.classList.add('good');});if(ok){state.done[p.id]=true;state.score=(state.score||0)+1;save();$('#solutionBox').classList.add('show');}else $('#hintBox').classList.add('show');};$('#hintStart').onclick=()=>$('#hintBox').classList.add('show');$('#nextStart').onclick=()=>{pIndex=(pIndex+1)%problems.length;bindProblem(target);};}
+function renderRead(){let p=problems[1];$('#readContent').innerHTML=`<h2>📐 Citește figura</h2><p class="hint">Nu calculăm încă. Doar citim corect desenul.</p><div class="figure">${diagram.thales}</div><div class="step"><div class="step-title">Ce segmente sunt paralele?</div><div class="answers"><button class="answer" data-read="bad">AB ∥ AC</button><button class="answer" data-read="good">DE ∥ BC</button><button class="answer" data-read="bad">AD ∥ AE</button></div></div><div class="step"><div class="step-title">La ce teorema te gândești?</div><div class="answers"><button class="answer" data-read="good">Teorema lui Thales</button><button class="answer" data-read="bad">Formula cercului</button></div></div><div class="actions"><button class="primary" id="readCheck">Verifică</button></div><div class="solution" id="readSol">Corect: DE ∥ BC. Un segment paralel cu o latură a triunghiului indică Teorema lui Thales și triunghiuri asemenea.</div>`;$$('[data-read]').forEach(b=>b.onclick=()=>b.classList.toggle('selected'));$('#readCheck').onclick=()=>{$$('[data-read="good"]').forEach(x=>x.classList.add('good'));$('#readSol').classList.add('show');};}
+function renderPractice(){let cards=problems.map((p,i)=>`<div class="step"><div class="step-title">${i+1}. ${p.title}</div><p>${p.text}</p><div class="actions"><button class="secondary" data-open="${i}">Deschide exercițiul ghidat</button></div></div>`).join('');$('#practiceContent').innerHTML=`<h2>✏️ Exerciții ghidate</h2><p class="hint">Începi prin observație, nu prin calcule.</p>${cards}`;$$('[data-open]').forEach(b=>b.onclick=()=>{pIndex=+b.dataset.open;go('start');bindProblem('#startContent');});}
+function renderFormulas(){let f=[['Pitagora','c² = a² + b²','Când ai un triunghi dreptunghic și cunoști două laturi.'],['Thales','AD / AB = AE / AC','Când un segment este paralel cu o latură a unui triunghi.'],['Aria triunghiului','A = (b · h) / 2','Când ai baza și înălțimea corespunzătoare.'],['Cerc','L = 2πr,  A = πr²','Pentru lungimea cercului și aria discului.']];$('#formulaContent').innerHTML=`<h2>📖 Formule cu sens</h2><p class="hint">Formula vine după ce recunoști situația din figură.</p>`+f.map(x=>`<div class="step"><div class="step-title">${x[0]}</div><div class="formula">${x[1]}</div><p><strong>Când o folosesc?</strong> ${x[2]}</p></div>`).join('');}
+let examSeconds=600, examTimer;function renderExam(){clearInterval(examTimer);examSeconds=600;let p=problems[0];$('#examContent').innerHTML=`<div class="exam-head"><div><h2>🎯 Simulare</h2><p class="hint">Fără hint-uri la început. Scrie pașii tăi.</p></div><div class="timer" id="timer">10:00</div></div><div class="figure">${diagram.right}</div><div class="step"><strong>Problema:</strong> ${p.text}</div><textarea id="examText" placeholder="Scrie: ce este dat, ce observi, ce teoremă alegi și calculele..."></textarea><div class="actions"><button class="primary" id="finishExam">Finalizează</button><button class="secondary" id="examAnswer">Arată explicația</button></div><div class="solution" id="examSol"><strong>Cheie de gândire:</strong> ${p.why}<br><br>${p.solution}</div>`;const tick=()=>{let m=Math.floor(examSeconds/60),s=examSeconds%60;$('#timer').textContent=`${m}:${String(s).padStart(2,'0')}`;if(examSeconds--<=0){clearInterval(examTimer);$('#examSol').classList.add('show');}};tick();examTimer=setInterval(tick,1000);$('#examAnswer').onclick=()=>$('#examSol').classList.add('show');$('#finishExam').onclick=()=>{clearInterval(examTimer);state.done.exam=true;save();$('#examSol').classList.add('show');};}
+function renderProgress(){let done=Object.keys(state.done).filter(k=>k!=='exam').length,total=problems.length;let theory=Math.round((Object.keys(state.flash).length/flash.length)*100);let application=Math.round((done/total)*100);let overall=Math.round((theory+application)/2);const row=(name,val)=>`<div class="bar-row"><div class="bar-label"><span>${name}</span><span>${val}%</span></div><div class="bar"><div class="fill" style="width:${val}%"></div></div></div>`;$('#progressContent').innerHTML=`<h2>📊 Progresul meu</h2><p class="hint">Progresul este salvat local în browserul acestui dispozitiv.</p>${row('Progres general',overall)}${row('Teorie — flashcarduri',theory)}${row('Aplicare — probleme ghidate',application)}<div class="step"><strong>Recomandare:</strong> ${application<theory?'Știi mai multă teorie decât aplici. Intră la „Începe problema”.':'Continuă: identifică primul pas înainte să calculezi.'}</div><div class="actions"><button class="secondary" id="resetProgress">Resetează progresul local</button></div>`;$('#resetProgress').onclick=()=>{if(confirm('Sigur vrei să ștergi progresul local?')){localStorage.removeItem(storageKey);location.reload();}};}
+$('#menuBtn').onclick=()=>$('#nav').classList.toggle('open');$$('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));$('#themeBtn').onclick=()=>{document.body.classList.toggle('force-light');document.documentElement.style.colorScheme=document.documentElement.style.colorScheme==='dark'?'light':'dark';};
+renderHome();renderFlash();bindProblem('#startContent');renderRead();renderPractice();renderFormulas();renderProgress();
+if('serviceWorker' in navigator)navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
+let deferredPrompt;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('#installBtn').style.display='block';});$('#installBtn').onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;$('#installBtn').style.display='none';}else alert('În Chrome: meniul ⋮ → „Instalează aplicația” sau „Adaugă pe ecranul principal”.');};
+</script>
+</body>
+</html>
