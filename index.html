@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <title>Proiect Geometrie — Pachet Consolidat v5–v8</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg: #0f1724;
+      --panel: #111827;
+      --text: #e5e7eb;
+      --accent: #38bdf8;
+      --accent2: #f472b6;
+      --grid: #1f2937;
+      --good: #22c55e;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 50% 30%, #1e293b 0%, var(--bg) 60%);
+      color: var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      grid-template-rows: auto 1fr auto;
+      min-height: 100vh;
+    }
+    header {
+      grid-column: 1 / -1;
+      padding: 1rem 1.5rem;
+      background: linear-gradient(180deg, rgba(17,24,39,0.9), rgba(17,24,39,0.6));
+      border-bottom: 1px solid #1f2937;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .status {
+      margin-left: auto;
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      font-size: 0.85rem;
+    }
+    .status .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--bad);
+      box-shadow: 0 0 6px var(--bad);
+    }
+    .status.online .dot {
+      background: var(--good);
+      box-shadow: 0 0 6px var(--good);
+    }
+    aside {
+      background: linear-gradient(180deg, rgba(17,24,39,0.7), rgba(17,24,39,0.4));
+      border-right: 1px solid #1f2937;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+    .panel {
+      background: rgba(17,24,39,0.6);
+      border: 1px solid #1f2937;
+      border-radius: 12px;
+      padding: 0.9rem;
+      margin-bottom: 1rem;
+    }
+    .panel h2 {
+      margin: 0 0 0.6rem 0;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .control {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.4rem 0.6rem;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      font-size: 0.85rem;
+    }
+    .control label { color: #9ca3af; }
+    .control input[type="range"] { width: 100%; }
+    .control input[type="number"],
+    .control select {
+      width: 100%;
+      background: #0b1220;
+      border: 1px solid #1f2937;
+      color: var(--text);
+      border-radius: 6px;
+      padding: 0.25rem 0.4rem;
+    }
+    .control .value {
+      justify-self: end;
+      font-variant-numeric: tabular-nums;
+      color: #9ca3af;
+    }
+    button {
+      width: 100%;
+      background: linear-gradient(180deg, #0ea5e9, #0284c7);
+      border: none;
+      color: white;
+      padding: 0.55rem 0.7rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.06s ease, filter 0.1s ease;
+    }
+    button:active { transform: translateY(1px); filter: brightness(0.92); }
+    button.secondary {
+      background: linear-gradient(180deg, #334155, #1e293b);
+    }
+    main {
+      position: relative;
+      overflow: hidden;
+    }
+    #canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      background:
+        radial-gradient(circle at 50% 40%, rgba(56,189,248,0.08), transparent 40%),
+        radial-gradient(circle at 70% 60%, rgba(244,114,182,0.06), transparent 35%);
+    }
+    .overlay {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      background: rgba(15,23,42,0.7);
+      border: 1px solid #1f2937;
+      border-radius: 10px;
+      padding: 0.6rem 0.8rem;
+      font-size: 0.8rem;
+      color: #9ca3af;
+      pointer-events: none;
+    }
+    footer {
+      grid-column: 1 / -1;
+      padding: 0.6rem 1.5rem;
+      font-size: 0.75rem;
+      color: #6b7280;
+      border-top: 1px solid #1f2937;
+      background: rgba(17,24,39,0.5);
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .legend {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+    .legend .item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+    .legend .swatch {
+      width: 10px; height: 10px; border-radius: 3px;
+    }
+    .swatch.circle { background: var(--accent); }
+    .swatch.space { background: var(--accent2); }
+    .swatch.combo { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+    .hint {
+      font-size: 0.75rem;
+      color: #6b7280;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Proiect Geometrie — Pachet Consolidat v5–v8</h1>
+    <div class="status" id="status">
+      <span class="dot"></span>
+      <span id="statusText">Offline</span>
+    </div>
+  </header>
+
+  <aside>
+    <div class="panel">
+      <h2>Simulare Cerc</h2>
+      <div class="control">
+        <label for="circleRadius">Rază cerc</label>
+        <input type="range" id="circleRadius" min="20" max="200" value="90" />
+        <span class="value" id="circleRadiusVal">90</span>
+      </div>
+      <div class="control">
+        <label for="circleSpeed">Viteză rotație</label>
+        <input type="range" id="circleSpeed" min="0" max="100" value="35" />
+        <span class="value" id="circleSpeedVal">35</span>
+      </div>
+      <div class="control">
+        <label for="circleGlow">Intensitate glow</label>
+        <input type="range" id="circleGlow" min="0" max="100" value="60" />
+        <span class="value" id="circleGlowVal">60</span>
+      </div>
+      <button id="toggleCircle">Pornește cercul</button>
+    </div>
+
+    <div class="panel">
+      <h2>Simulare Spațiu 3D</h2>
+      <div class="control">
+        <label for="spaceDensity">Densitate particule</label>
+        <input type="range" id="spaceDensity" min="50" max="600" value="220" />
+        <span class="value" id="spaceDensityVal">220</span>
+      </div>
+      <div class="control">
+        <label for="spaceSpeed">Viteză drift</label>
+        <input type="range" id="spaceSpeed" min="0" max="100" value="25" />
+        <span class="value" id="spaceSpeedVal">25</span>
+      </div>
+      <div class="control">
+        <label for="spaceDepth">Adâ»Łcime perspectivÄŁ</label>
+        <input type="range" id="spaceDepth" min="200" max="1200" value="700" />
+        <span class="value" id="spaceDepthVal">700</span>
+      </div>
+      <button id="toggleSpace" class="secondary">Pornește spațiul</button>
+    </div>
+
+    <div class="panel">
+      <h2>Probleme combinate</h2>
+      <div class="control">
+        <label for="comboMode">Mod</label>
+        <select id="comboMode">
+          <option value="orbit">OrbitÄŁ + particule</option>
+          <option value="pulse">Puls + undÄŁ spațialÄŁ</option>
+          <option value="hybrid">Hibrid complet</option>
+        </select>
+      </div>
+      <div class="control">
+        <label for="comboIntensity">Intensitate</label>
+        <input type="range" id="comboIntensity" min="0" max="100" value="50" />
+        <span class="value" id="comboIntensityVal">50</span>
+      </div>
+      <button id="toggleCombo" class="secondary">ActiveazÄŁ probleme</button>
+    </div>
+
+    <div class="panel">
+      <h2>Acțiuni</h2>
+      <button id="resetAll" class="secondary">Resetează tot</button>
+      <button id="saveSnapshot">Salvează instantaneu</button>
+    </div>
+  </aside>
+
+  <main>
+    <canvas id="canvas"></canvas>
+    <div class="overlay" id="overlay">
+      FPS: <span id="fps">0</span> |
+      Entități: <span id="entityCount">0</span> |
+      Mod: <span id="modeLabel">Inactiv</span>
+    </div>
+  </main>
+
+  <footer>
+    <div class="legend">
+      <div class="item"><span class="swatch circle"></span> Cerc dinamic</div>
+      <div class="item"><span class="swatch space"></span> Particule spațiale</div>
+      <div class="item"><span class="swatch combo"></span> Probleme combinate</div>
+    </div>
+    <div class="hint">
+      Folosește slider-ele pentru a ajusta parametrii în timp real.
+    </div>
+  </footer>
+
+  <script>
+    // === Utilitare ===
+    const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
+    const lerp = (a, b, t) => a + (b - a) * t;
+
+    // === Canvas setup ===
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let width = 0, height = 0, dpr = 1;
+
+    function resize() {
+      dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      width = Math.floor(rect.width);
+      height = Math.floor(rect.height);
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // === Stare globalÄŁ ===
+    const state = {
+      circle: {
+        active: false,
+        radius: 90,
+        speed: 0.035,
+        glow: 0.6,
+        angle: 0,
+        pulsePhase: 0
+      },
+      space: {
+        active: false,
+        density: 220,
+        speed: 0.25,
+        depth: 700,
+        particles: []
+      },
+      combo: {
+        active: false,
+        mode: 'orbit',
+        intensity: 0.5
+      },
+      running: false
+    };
+
+    // === Inițializare particule ===
+    function initParticles() {
+      const count = state.space.density;
+      state.space.particles = [];
+      for (let i = 0; i < count; i++) {
+        state.space.particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          z: Math.random() * state.space.depth,
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: (Math.random() - 0.5) * 0.4,
+          vz: (Math.random() - 0.5) * 0.3,
+          hue: 200 + Math.random() * 80
+        });
+      }
+    }
+    initParticles();
+
+    // === Controale UI ===
+    function bindRange(id, targetObj, key, scale = 1) {
+      const el = document.getElementById(id);
+      const valEl = document.getElementById(id + 'Val');
+      el.value = targetObj[key] / scale;
+      valEl.textContent = Math.round(targetObj[key] / scale);
+      el.addEventListener('input', () => {
+        const v = parseFloat(el.value);
+        targetObj[key] = v * scale;
+        valEl.textContent = Math.round(v);
+        if (key === 'density') {
+          initParticles();
+        }
+      });
+    }
+
+    bindRange('circleRadius', state.circle, 'radius');
+    bindRange('circleSpeed', state.circle, 'speed', 1000);
+    bindRange('circleGlow', state.circle, 'glow', 100);
+
+    bindRange('spaceDensity', state.space, 'density');
+    bindRange('spaceSpeed', state.space, 'speed', 100);
+    bindRange('spaceDepth', state.space, 'depth');
+
+    const comboModeEl = document.getElementById('comboMode');
+    const comboIntensityEl = document.getElementById('comboIntensity');
+    const comboIntensityVal = document.getElementById('comboIntensityVal');
+    comboModeEl.value = state.combo.mode;
+    comboIntensityVal.textContent = Math.round(state.combo.intensity * 100);
+
+    comboModeEl.addEventListener('change', () => {
+      state.combo.mode = comboModeEl.value;
+    });
+    comboIntensityEl.addEventListener('input', () => {
+      const v = parseFloat(comboIntensityEl.value);
+      state.combo.intensity = v / 100;
+      comboIntensityVal.textContent = Math.round(v);
+    });
+
+    // Butoane
+    const circleBtn = document.getElementById('toggleCircle');
+    const spaceBtn = document.getElementById('toggleSpace');
+    const comboBtn = document.getElementById('toggleCombo');
+    const resetBtn = document.getElementById('resetAll');
+    const saveBtn = document.getElementById('saveSnapshot');
+
+    circleBtn.addEventListener('click', () => {
+      state.circle.active = !state.circle.active;
+      circleBtn.textContent = state.circle.active ? 'Oprește cercul' : 'Pornește cercul';
+      updateStatus();
+    });
+    spaceBtn.addEventListener('click', () => {
+      state.space.active = !state.space.active;
+      spaceBtn.textContent = state.space.active ? 'Oprește spațiul' : 'Pornește spațiul';
+      updateStatus();
+    });
+    comboBtn.addEventListener('click', () => {
+      state.combo.active = !state.combo.active;
+      comboBtn.textContent = state.combo.active ? 'DezactiveazÄŁ probleme' : 'ActiveazÄŁ probleme';
+      updateStatus();
+    });
+
+    resetBtn.addEventListener('click', () => {
+      state.circle.active = false;
+      state.space.active = false;
+      state.combo.active = false;
+      state.circle.angle = 0;
+      state.circle.pulsePhase = 0;
+      initParticles();
+      circleBtn.textContent = 'Pornește cercul';
+      spaceBtn.textContent = 'Pornește spațiul';
+      comboBtn.textContent = 'ActiveazÄŁ probleme';
+      updateStatus();
+    });
+
+    saveBtn.addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.download = 'snapshot_' + Date.now() + '.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+
+    // Status online/offline
+    const statusEl = document.getElementById('status');
+    const statusText = document.getElementById('statusText');
+    function updateStatus() {
+      const anyActive = state.circle.active || state.space.active || state.combo.active;
+      statusEl.classList.toggle('online', anyActive);
+      statusText.textContent = anyActive ? 'Online' : 'Offline';
+    }
+    updateStatus();
+
+    // === LogicÄŁ randare ===
+    let lastTime = performance.now();
+    let frameCount = 0;
+    let fpsTimer = 0;
+    const fpsEl = document.getElementById('fps');
+    const entityCountEl = document.getElementById('entityCount');
+    const modeLabelEl = document.getElementById('modeLabel');
+
+    function drawCircle(cx, cy, t) {
+      const { radius, speed, glow, angle, pulsePhase } = state.circle;
+
+      // Pulsatie combinatÄŁ cu rotație
+      const pulse = 1 + 0.15 * Math.sin(pulsePhase * 2.5);
+      const r = radius * pulse;
+
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(angle);
+
+      // Cerc principal
+      ctx.beginPath();
+      ctx.arc(0, 0, r, 0, Math.PI * 2);
+      const grad = ctx.createRadialGradient(0, 0, r * 0.4, 0, 0, r * 1.6);
+      grad.addColorStop(0, `rgba(56,189,248,${0.9 * glow})`);
+      grad.addColorStop(0.6, `rgba(56,189,248,${0.35 * glow})`);
+      grad.addColorStop(1, `rgba(56,189,248,0)`);
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // Contur dinamic
+      ctx.beginPath();
+      ctx.arc(0, 0, r, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(125,211,252,${0.7 * glow})`;
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      // Elemente orbitale
+      const orbitR = r * 1.9;
+      for (let i = 0; i < 3; i++) {
+        const a = t * (0.7 + i * 0.4) + (i * Math.PI * 2) / 3;
+        const x = Math.cos(a) * orbitR;
+        const y = Math.sin(a) * orbitR * 0.6;
+        ctx.beginPath();
+        ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(244,114,182,${0.8 * glow})`;
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
+
+    function drawSpace(t) {
+      const { particles, speed, depth } = state.space;
+      const cx = width / 2;
+      const cy = height / 2;
+
+      for (const p of particles) {
+        // Mișcare 3D simplificatÄŁ
+        p.x += p.vx * speed * 60 * 0.016;
+        p.y += p.vy * speed * 60 * 0.016;
+        p.z += p.vz * speed * 60 * 0.016;
+
+        if (p.z <= 10) {
+          p.z = depth;
+          p.x = Math.random() * width;
+          p.y = Math.random() * height;
+        }
+
+        const scale = depth / (depth - p.z + 1);
+        const sx = cx + (p.x - cx) * scale;
+        const sy = cy + (p.y - cy) * scale;
+        const size = 1.2 * scale;
+        const alpha = clamp((depth - p.z) / depth, 0.1, 0.9);
+
+        ctx.beginPath();
+        ctx.arc(sx, sy, size, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${p.hue}, 80%, 65%, ${alpha})`;
+        ctx.fill();
+      }
+    }
+
+    function drawCombo(t) {
+      const { mode, intensity } = state.combo;
+      const cx = width / 2;
+      const cy = height / 2;
+
+      if (mode === 'orbit') {
+        // Inele orbitale combinate cu particule
+        const rings = 5;
+        for (let i = 1; i <= rings; i++) {
+          const r = 60 + i * 40 * intensity;
+          const speedBase = 0.004 * (i % 2 === 0 ? 1 : -1);
+          const a = t * speedBase * (1 + intensity);
+          ctx.beginPath();
+          ctx.ellipse(cx, cy, r, r * 0.55, a, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(56,189,248,${0.25 * intensity})`;
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+      } else if (mode === 'pulse') {
+        // Unde de șoc + distortare spațialÄŁ
+        const waves = 4;
+        for (let i = 0; i < waves; i++) {
+          const phase = (t * 0.002 + i * 0.5) % 1;
+          const r = (phase * width * 0.45) * (0.6 + 0.4 * intensity);
+          const alpha = (1 - phase) * 0.35 * intensity;
+          ctx.beginPath();
+          ctx.arc(cx, cy, r, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(244,114,182,${alpha})`;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+      } else if (mode === 'hybrid') {
+        // Combinație completÄŁ
+        const t2 = t * 0.0015;
+        for (let i = 0; i < 8; i++) {
+          const r = 80 + i * 35;
+          const a = t2 * (i % 2 === 0 ? 1 : -1) * (1 + intensity);
+          ctx.beginPath();
+          ctx.ellipse(cx, cy, r, r * (0.5 + 0.3 * Math.sin(t2 + i)), a, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(${i % 2 === 0 ? '56,189,248' : '244,114,182'},${0.18 * intensity})`;
+          ctx.lineWidth = 1.2;
+          ctx.stroke();
+        }
+      }
+    }
+
+    function loop(now) {
+      if (!state.running) return;
+      const dt = now - lastTime;
+      lastTime = now;
+
+      // FPS
+      frameCount++;
+      fpsTimer += dt;
+      if (fpsTimer >= 500) {
+        fpsEl.textContent = Math.round((frameCount * 1000) / fpsTimer);
+        frameCount = 0;
+        fpsTimer = 0;
+      }
+
+      // Clear
+      ctx.clearRect(0, 0, width, height);
+
+      // Fundal subtil gradient animat
+      const t = now;
+      const bgGrad = ctx.createRadialGradient(
+        width * 0.5, height * 0.35, 0,
+        width * 0.5, height * 0.35, Math.max(width, height) * 0.9
+      );
+      bgGrad.addColorStop(0, 'rgba(30,41,59,0.9)');
+      bgGrad.addColorStop(1, 'rgba(15,23,42,0.95)');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, width, height);
+
+      // ActualizÄŁri stare
+      if (state.circle.active) {
+        state.circle.angle += state.circle.speed;
+        state.circle.pulsePhase += 0.016;
+      }
+
+      // Randare
+      if (state.space.active) {
+        drawSpace(t);
+      }
+      if (state.circle.active) {
+        drawCircle(width / 2, height / 2, t);
+      }
+      if (state.combo.active) {
+        drawCombo(t);
+      }
+
+      // UI info
+      let entities = 0;
+      if (state.circle.active) entities += 1;
+      if (state.space.active) entities += state.space.particles.length;
+      if (state.combo.active) entities += 1;
+      entityCountEl.textContent = entities;
+
+      let modeLabel = 'Inactiv';
+      if (state.circle.active && state.space.active && state.combo.active) {
+        modeLabel = 'Cerc + Spațiu + Probleme';
+      } else if (state.circle.active && state.space.active) {
+        modeLabel = 'Cerc + Spațiu';
+      } else if (state.circle.active && state.combo.active) {
+        modeLabel = 'Cerc + Probleme';
+      } else if (state.space.active && state.combo.active) {
+        modeLabel = 'Spațiu + Probleme';
+      } else if (state.circle.active) {
+        modeLabel = 'Doar cerc';
+      } else if (state.space.active) {
+        modeLabel = 'Doar spațiu';
+      } else if (state.combo.active) {
+        modeLabel = 'Doar probleme';
+      }
+      modeLabelEl.textContent = modeLabel;
+
+      requestAnimationFrame(loop);
+    }
+
+    // Start loop
+    state.running = true;
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>
